@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="papel">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1f7a4d">
+  <title>ApunteVivo — transcripción de clase</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f7a4d'/%3E%3Cpath d='M9 7v18M9 7h8.5a4 4 0 0 1 0 8H9' stroke='%23f6f1e8' stroke-width='1.6' fill='none'/%3E%3Cpath d='M22 18.2c1.1 1.1 1.1 2.8 0 3.9M24.1 16.4c1.9 1.9 1.9 5 0 6.9' stroke='%23f3e2b0' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,500;0,7..72,680;1,7..72,500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    try {
+      var savedTheme = JSON.parse(localStorage.getItem("apuntevivo-v1") || "{}").theme;
+      if (savedTheme === "tinta" || savedTheme === "papel") {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      } else if (matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.setAttribute("data-theme", "tinta");
+      }
+    } catch (e) {}
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --desk: #d5cbbd;
+      --sheet: #fbf7f0;
+      --ink: #1e1a16;
+      --faint: #6d655c;
+      --margin: #d4534a;
+      --line: rgba(30, 26, 22, .14);
+      --input: #fffdf9;
+      --interim: #9a5b28;
+      --chip: #f0e6d6;
+      --ribbon: #1c7a4d;
+      --lamp: rgba(232, 184, 109, 0);
+      --shadow: 0 18px 50px rgba(62, 44, 20, .13);
+      --serif: "Literata", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      --sans: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
+      --text: 22px;
+    }
+    html[data-theme="tinta"] {
+      color-scheme: dark;
+      --desk: #100e0c;
+      --sheet: #1b1916;
+      --ink: #f4efe6;
+      --faint: #b7aea2;
+      --margin: #e07a6c;
+      --line: rgba(244, 239, 230, .14);
+      --input: #26221e;
+      --interim: #e2b07a;
+      --chip: #2c2824;
+      --ribbon: #c6e07a;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .4);
+    }
+    .app.is-live { --lamp: rgba(232, 184, 109, .22); }
+    html[data-theme="tinta"] .app.is-live { --lamp: rgba(198, 224, 122, .09); }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--ink);
+      background:
+        radial-gradient(1100px 420px at 50% -8%, rgba(255, 255, 255, .28), transparent 55%),
+        var(--desk);
+    }
+    html[data-theme="tinta"] body {
+      background:
+        radial-gradient(900px 380px at 50% -10%, rgba(198, 224, 122, .06), transparent 50%),
+        var(--desk);
+    }
+    button, input, select, textarea { font-family: inherit; color: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; opacity: .6; }
+    :focus-visible { outline: 2px solid #e2b15a; outline-offset: 2px; }
+    ::selection { background: #f0d7a2; color: #1b1916; }
+
+    .app {
+      width: min(940px, 100%);
+      height: 100dvh;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 12px 0;
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 2px 8px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand h1 { margin: 0; font-family: var(--serif); font-size: 20px; font-weight: 680; letter-spacing: -.02em; }
+    .brand p { margin: 0; color: var(--faint); font-size: 12px; }
+    .top-actions { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .text-btn, .ghost, .chip {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .text-btn:hover, .ghost:hover, .chip:hover { border-color: var(--faint); }
+
+    .framebar, .privacy, .banner {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .framebar { background: #1f7a4d; color: #fff; }
+    .framebar a, .framebar button {
+      color: #fff;
+      background: rgba(0, 0, 0, .18);
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .privacy { background: rgba(31, 122, 77, .12); }
+    .banner { background: #f3e2c4; color: #3a2a14; }
+    html[data-theme="tinta"] .banner { background: #3d3220; color: #f6e7c8; }
+    .framebar p, .privacy p, .banner p { margin: 0; }
+    .icon-x {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 20px;
+      line-height: 1;
+      padding: 0 4px;
+    }
+
+    .sheet-wrap { position: relative; flex: 1; min-height: 0; display: flex; }
+    .sheet {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      overscroll-behavior: contain;
+      background-color: var(--sheet);
+      background-image:
+        linear-gradient(90deg, transparent 63px, var(--margin) 63px, var(--margin) 65px, transparent 65px),
+        radial-gradient(ellipse at 28% 0%, var(--lamp), transparent 52%);
+      background-repeat: no-repeat;
+      background-size: 100% 100%, 100% 280px;
+      border-radius: 18px 18px 0 0;
+      box-shadow: var(--shadow);
+      scrollbar-width: thin;
+      scrollbar-color: #c4b8a6 transparent;
+    }
+    .sheet-wrap::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 36px;
+      width: 13px;
+      height: 76px;
+      background: var(--ribbon);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity .25s ease;
+    }
+    .app.is-live .sheet-wrap::after { opacity: 1; }
+
+    .sheet-head { padding: 22px 28px 8px 80px; }
+    #title {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      font-family: var(--serif);
+      font-size: clamp(26px, 4vw, 34px);
+      font-weight: 680;
+      letter-spacing: -.03em;
+      padding: 0;
+      outline: none;
+    }
+    #title::placeholder { color: color-mix(in srgb, var(--faint) 75%, transparent); }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: center;
+      margin-top: 8px;
+      color: var(--faint);
+      font-size: 13px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #eeeae3;
+      color: #5c564e;
+    }
+    .pill.local { background: #e5f3ea; color: #14613c; }
+    .pill.cloud { background: #f8ecd4; color: #8a5a12; }
+    html[data-theme="tinta"] .pill { background: #2a2723; color: #c4bbb0; }
+    html[data-theme="tinta"] .pill.local { background: #1d3a2a; color: #c6e07a; }
+    html[data-theme="tinta"] .pill.cloud { background: #3a2e1c; color: #f0c27a; }
+    #lang, .font-ctrl button {
+      border: 1px solid var(--line);
+      background: var(--input);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 13px;
+    }
+    .font-ctrl { display: inline-flex; align-items: center; gap: 4px; }
+    .font-ctrl button { width: 32px; height: 28px; padding: 0; font-weight: 700; }
+    #font-label { min-width: 1.6em; text-align: center; font-variant-numeric: tabular-nums; }
+
+    .para {
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr);
+      column-gap: 16px;
+      padding: 6px 28px 6px 0;
+    }
+    .para time {
+      text-align: right;
+      font-size: 12px;
+      color: var(--faint);
+      padding-top: 7px;
+      font-variant-numeric: tabular-nums;
+    }
+    .para p {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: var(--text);
+      line-height: 1.48;
+      font-weight: 500;
+      overflow-wrap: break-word;
+      outline: none;
+      border-radius: 8px;
+      padding-right: 34px;
+    }
+    .para p[contenteditable="true"]:focus { background: color-mix(in srgb, var(--interim) 12%, transparent); }
+    .para.fresh p { animation: lockin 1.1s ease; }
+    @keyframes lockin {
+      from { background: rgba(31, 122, 77, .16); }
+      to { background: transparent; }
+    }
+    .para-mark p {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: var(--chip);
+      border-radius: 999px;
+      padding: 5px 10px;
+      margin-top: 6px;
+    }
+    .para-importante p { color: #9a6230; }
+    .para-duda p { color: #2a5f8a; }
+    .para-tarea p { color: #1d6b45; }
+    .para-voz p { color: var(--faint); letter-spacing: .12em; }
+    .para-nota p { text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; }
+    html[data-theme="tinta"] .para-duda p { color: #9ec4e6; }
+    html[data-theme="tinta"] .para-tarea p { color: #b7d99a; }
+    html[data-theme="tinta"] .para-importante p { color: #f0c27a; }
+    .del {
+      justify-self: end;
+      align-self: start;
+      margin: 4px 0 0 8px;
+      border: 0;
+      background: transparent;
+      color: var(--faint);
+      font-size: 18px;
+      line-height: 1;
+      grid-column: 2;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+    }
+    .para { position: relative; }
+    .para .del { position: absolute; right: 8px; top: 4px; }
+    @media (hover: hover) {
+      .del { opacity: 0; }
+      .para:hover .del, .para:focus-within .del { opacity: 1; }
+    }
+
+    .interim { color: var(--interim); font-style: italic; }
+    .interim.waiting { opacity: .72; }
+    .interim.waiting::after, .app.is-live .interim:not(.waiting)::after {
+      content: "";
+      display: inline-block;
+      width: 2px;
+      height: .9em;
+      margin-left: 3px;
+      background: currentColor;
+      vertical-align: text-bottom;
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    #empty {
+      min-height: 42vh;
+      padding: 12px 32px 36px 84px;
+      max-width: 680px;
+    }
+    #empty h2 {
+      font-family: var(--serif);
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 680;
+      letter-spacing: -.03em;
+      margin: 8px 0 8px;
+    }
+    #empty p { margin: 0 0 12px; font-size: 16.5px; line-height: 1.45; }
+    #empty ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+    #empty li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.4; }
+    #empty li span {
+      flex: 0 0 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #1f7a4d;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+    .mark-svg { width: 46px; height: 46px; }
+
+    #jump {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      border: 0;
+      background: #1e1a16;
+      color: #fbf7f0;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+    }
+
+    .dock {
+      background: #231f1b;
+      color: #f6f1e8;
+      border-radius: 18px 18px 0 0;
+      padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+      display: grid;
+      gap: 8px;
+    }
+    .listen {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      height: 58px;
+      border: 0;
+      border-radius: 999px;
+      background: #1f7a4d;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 0 18px;
+    }
+    .listen.is-on { background: #c24e2c; }
+    .listen .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #fff;
+      flex: 0 0 auto;
+    }
+    .listen.is-on .dot { animation: pulse 1.4s ease-out infinite; }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .65); }
+      100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+    }
+    #clock { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 15px; opacity: .9; }
+    #substatus { margin: 0; font-size: 13px; color: rgba(246, 241, 232, .78); min-height: 1.2em; }
+    #note {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, .14);
+      background: rgba(255, 255, 255, .06);
+      color: #f6f1e8;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 16px;
+    }
+    #note::placeholder { color: rgba(246, 241, 232, .45); }
+    .tools {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .tools::-webkit-scrollbar { display: none; }
+    .chip {
+      flex: 0 0 auto;
+      color: #f6f1e8;
+      border-color: rgba(255, 255, 255, .16);
+      background: rgba(255, 255, 255, .04);
+    }
+    .chip.gold { color: #f0d7a2; }
+    .hints { margin: 0; font-size: 11px; color: rgba(246, 241, 232, .45); }
+
+    .toast {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
+      background: #1e1a16;
+      color: #fbf7f0;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      max-width: min(540px, calc(100% - 24px));
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .24);
+    }
+
+    dialog {
+      border: 0;
+      border-radius: 18px;
+      padding: 20px;
+      width: min(520px, calc(100vw - 28px));
+      background: var(--sheet);
+      color: var(--ink);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .28);
+    }
+    dialog::backdrop { background: rgba(20, 16, 12, .48); }
+    dialog h2 { font-family: var(--serif); margin: 0 0 8px; font-size: 26px; letter-spacing: -.02em; }
+    dialog p { white-space: pre-wrap; line-height: 1.45; margin: 0 0 12px; }
+    #help { width: min(580px, calc(100vw - 28px)); max-height: min(82vh, 720px); overflow: auto; }
+    #help h3 { margin: 16px 0 6px; font-size: 15px; }
+    #help p, #help li { white-space: normal; font-size: 14.5px; line-height: 1.45; }
+    #help ul, #help ol { margin: 0; padding-left: 18px; }
+    .help-top, .modal-actions { display: flex; gap: 8px; justify-content: space-between; align-items: center; }
+    .modal-actions { justify-content: flex-end; flex-wrap: wrap; margin-top: 8px; }
+    .primary {
+      background: #1f7a4d;
+      color: #fff;
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+    }
+    .choice { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; margin: 8px 0; }
+    fieldset {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin: 0 0 12px;
+      padding: 8px 12px 10px;
+    }
+    legend { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 0 4px; }
+    #settings { width: min(460px, calc(100vw - 24px)); max-height: min(86vh, 760px); overflow: auto; }
+    #settings label.block { display: grid; gap: 6px; font-size: 14px; margin: 0 0 12px; font-weight: 600; }
+    #settings select, #glossary {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--input);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 16px;
+      font-weight: 400;
+    }
+    #glossary { min-height: 120px; resize: vertical; font-size: 14px; line-height: 1.4; }
+    .checkline { display: flex; gap: 8px; align-items: flex-start; font-weight: 500; font-size: 14px; margin: 8px 0; }
+
+    .print-only { display: none; }
+    @media print {
+      body { background: #fff; }
+      .app { height: auto; display: block; width: 100%; padding: 0; }
+      .no-print, .sheet-wrap::after, .del, #empty, #live, #jump { display: none !important; }
+      .print-only { display: block; }
+      .sheet {
+        overflow: visible;
+        box-shadow: none;
+        border-radius: 0;
+        background: #fff;
+        background-image: none;
+      }
+      .para p { font-size: 12pt; color: #000; }
+      .para time { color: #444; }
+      #print-title { font-family: Georgia, serif; font-size: 20pt; margin: 0 0 4px; }
+      #print-meta { margin: 0 0 16px; color: #444; }
+      @page { margin: 14mm; }
+    }
+    @media (max-width: 680px) {
+      .app { padding: 8px 8px 0; }
+      .brand p, .hints { display: none; }
+      .sheet {
+        background-image: radial-gradient(ellipse at 20% 0%, var(--lamp), transparent 55%);
+        border-radius: 14px 14px 0 0;
+      }
+      .sheet-head, #empty { padding-left: 16px; padding-right: 16px; }
+      .para p { padding-right: 0; }
+      .para { grid-template-columns: 1fr; padding: 7px 16px; }
+      .para time { text-align: left; padding-top: 0; font-size: 11px; }
+      .para .del { position: static; grid-column: 1; justify-self: start; }
+      .sheet-wrap::after { right: 16px; }
+      .framebar { flex-wrap: wrap; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+    button, .chip, .listen, .text-btn { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    .frame-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .framebar button {
+      color: #fff;
+      background: rgba(0, 0, 0, .18);
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    #mic-help { width: min(680px, calc(100vw - 16px)); max-height: min(92dvh, 860px); overflow: auto; }
+    #mic-help h2 { font-size: clamp(24px, 4vw, 32px); }
+    #mic-help .lead { font-size: 16.5px; line-height: 1.45; }
+    #mic-steps { margin: 8px 0 14px; padding-left: 22px; font-size: 16.5px; line-height: 1.45; }
+    #mic-steps li { margin: 0 0 10px; }
+    .device-switch { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 12px; }
+    .device-switch button.is-on { background: #1f7a4d; color: #fff; border-color: transparent; }
+    #mic-ask {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 999px;
+      background: #1f7a4d;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    #mic-btn { width: 100%; min-height: 48px; border-color: rgba(240, 215, 162, .5); }
+    .finish {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 999px;
+      background: #f6f1e8;
+      color: #1e1a16;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .grade-row { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; }
+    .grade-row span { font-size: 13px; font-weight: 700; color: var(--faint); }
+    #grado {
+      flex: 1;
+      min-height: 44px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--input);
+      padding: 8px 10px;
+    }
+    .grade-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .grade-item p { margin: 0; white-space: normal; font-size: 14px; }
+    .grade-item button { flex: 0 0 auto; }
+    @media (pointer: coarse) {
+      .listen { height: 68px; font-size: 20px; }
+      .chip { min-height: 46px; padding: 10px 14px; font-size: 15px; }
+      .text-btn { min-height: 40px; }
+      #note { min-height: 48px; }
+      .dock { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+    }
+    @media (max-height: 520px) {
+      .listen { height: 48px; }
+      #empty { display: none !important; }
+      .brand p { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div id="framebar" class="framebar no-print" hidden>
+      <p><strong>Aquí no se puede desbloquear el micrófono.</strong> Esta ventana está dentro del chat y el navegador lo prohíbe. Ábrela en Chrome o Safari, en una pestaña normal. En la tablet no abras el archivo descargado.</p>
+      <div class="frame-actions">
+        <a id="open-tab" target="_blank" rel="noopener">Abrir en el navegador</a>
+        <button type="button" id="frame-help">Ver los pasos</button>
+      </div>
+    </div>
+
+    <header class="top no-print">
+      <div class="brand">
+        <svg class="mark-svg" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="#1f7a4d"/>
+          <path d="M9 7v18M9 7h8.5a4 4 0 0 1 0 8H9" stroke="#f6f1e8" stroke-width="1.6" fill="none"/>
+          <path d="M22 18.2c1.1 1.1 1.1 2.8 0 3.9M24.1 16.4c1.9 1.9 1.9 5 0 6.9" stroke="#f3e2b0" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <h1>ApunteVivo</h1>
+          <p>Transcripción de clase, sin archivo de audio</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="text-btn" id="theme-btn">Tema oscuro</button>
+        <button type="button" class="text-btn" id="help-btn">Ayuda</button>
+        <button type="button" class="text-btn" id="settings-btn">Ajustes</button>
+      </div>
+    </header>
+
+    <div id="privacy" class="privacy no-print">
+      <p>No se crea ni se guarda ningún archivo de audio. Si eliges internet, Chrome envía la voz a Google solo para devolver texto. El apunte queda en este navegador: descárgalo al terminar.</p>
+      <button type="button" class="icon-x" id="privacy-x" aria-label="Ocultar aviso">×</button>
+    </div>
+    <div id="banner" class="banner no-print" hidden>
+      <p id="banner-text"></p>
+      <button type="button" class="icon-x" id="banner-x" aria-label="Cerrar aviso">×</button>
+    </div>
+
+    <main class="sheet-wrap">
+      <section class="sheet" id="sheet" aria-label="Apunte">
+        <div class="print-only print-head">
+          <h1 id="print-title">Apunte de clase</h1>
+          <p id="print-meta"></p>
+        </div>
+        <div class="sheet-head no-print">
+          <label class="grade-row">
+            <span>Grado</span>
+            <select id="grado" aria-label="Grado">
+              <option value="inicial">Inicial</option>
+              <option value="preescolar">Preescolar</option>
+              <option value="1" selected>1.° grado</option>
+              <option value="2">2.° grado</option>
+              <option value="3">3.° grado</option>
+              <option value="4">4.° grado</option>
+              <option value="5">5.° grado</option>
+              <option value="6">6.° grado</option>
+              <option value="7">7.° grado</option>
+              <option value="8">8.° grado</option>
+              <option value="9">9.° grado</option>
+              <option value="otro">Otro</option>
+            </select>
+          </label>
+          <input id="title" maxlength="120" placeholder="Materia, por ejemplo Matemática" aria-label="Materia" autocomplete="off">
+          <div class="meta-row">
+            <span id="date"></span>
+            <span id="engine-pill" class="pill">Sin archivo de audio</span>
+            <span id="stats">0 palabras</span>
+            <span id="saved">Todavía no hay texto</span>
+            <span class="font-ctrl">
+              <button type="button" id="font-down" aria-label="Texto más chico">A−</button>
+              <span id="font-label">22</span>
+              <button type="button" id="font-up" aria-label="Texto más grande">A+</button>
+            </span>
+            <select id="lang" aria-label="Variante de español">
+              <option value="es-PY" selected>Español (Paraguay)</option>
+              <option value="es-AR">Español (Argentina)</option>
+              <option value="es-ES">Español (España)</option>
+              <option value="es-MX">Español (México)</option>
+              <option value="es-CO">Español (Colombia)</option>
+              <option value="es-CL">Español (Chile)</option>
+              <option value="es-PE">Español (Perú)</option>
+              <option value="es-UY">Español (Uruguay)</option>
+              <option value="es-US">Español (Estados Unidos)</option>
+              <option value="es-VE">Español (Venezuela)</option>
+              <option value="es-BO">Español (Bolivia)</option>
+            </select>
+          </div>
+        </div>
+        <div id="flow"></div>
+        <div id="live" class="para live-para" hidden>
+          <time>ahora</time>
+          <p id="interim" class="interim waiting">Escuchando…</p>
+        </div>
+        <div id="empty">
+          <h2>Tu clase, en texto.</h2>
+          <p>Pulsa Escuchar y acerca el micrófono. El texto aparece al instante y sigue hasta que pulses Pausar. Un silencio de la clase no lo detiene.</p>
+          <ol>
+            <li><span>1</span>En tablet Android usa Chrome. En iPad usa Safari. No lo abras desde Archivos ni dentro del chat.</li>
+            <li><span>2</span>Toca Escuchar y, si no sale el aviso, toca Desbloquear micrófono.</li>
+            <li><span>3</span>Al cerrar el grado, pulsa Terminar. Se guarda ese apunte y puedes seguir con el siguiente.</li>
+          </ol>
+        </div>
+      </section>
+      <button type="button" id="jump" hidden>Volver al vivo</button>
+    </main>
+
+    <footer class="dock no-print">
+      <button type="button" id="listen-btn" class="listen" aria-pressed="false">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="listen-label">Escuchar</span>
+        <span id="clock">00:00:00</span>
+      </button>
+      <button type="button" id="finish-btn" class="finish">Terminar este grado</button>
+      <p id="substatus" aria-live="polite">Pausar no cierra el grado. Terminar lo guarda y abre el siguiente.</p>
+      <button type="button" id="mic-btn" class="chip gold">Desbloquear micrófono</button>
+      <input id="note" placeholder="Nota rápida y Enter — no pausa la transcripción" autocomplete="off" enterkeyhint="done">
+      <div class="tools" id="tools">
+        <button type="button" class="chip gold" data-mark="importante">★ Importante</button>
+        <button type="button" class="chip" data-mark="duda">? Duda</button>
+        <button type="button" class="chip" data-mark="tarea">Tarea</button>
+        <button type="button" class="chip" data-mark="voz">Otra voz</button>
+        <button type="button" class="chip" id="para-btn">Párrafo</button>
+        <button type="button" class="chip" id="copy-btn">Copiar</button>
+        <button type="button" class="chip" id="download-btn">Descargar</button>
+        <button type="button" class="chip" id="print-btn">Imprimir</button>
+        <button type="button" class="chip" id="grades-btn">Grados guardados</button>
+        <button type="button" class="chip" id="new-btn">Borrar este</button>
+      </div>
+      <p class="hints">Atajos: P pausa · N párrafo · I importante · D duda · T tarea</p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" hidden role="status"></div>
+
+  <dialog id="ask" class="no-print">
+    <h2 id="ask-title"></h2>
+    <p id="ask-body"></p>
+    <label id="remember-row" class="choice" hidden>
+      <input type="checkbox" id="remember" checked>
+      Recordar en este navegador
+    </label>
+    <div id="ask-actions" class="modal-actions"></div>
+  </dialog>
+
+  <dialog id="help" class="no-print">
+    <form method="dialog" class="help-top">
+      <h2>Cómo usarla en clase</h2>
+      <button class="ghost" value="cerrar">Cerrar</button>
+    </form>
+    <h3>Pasos</h3>
+    <ol>
+      <li>Ábrela en Google Chrome o Microsoft Edge. En el celular, Chrome de Android. En iPhone suele no funcionar la transcripción continua.</li>
+      <li>Si la ves dentro de una vista previa, ábrela en una pestaña nueva y permite el micrófono.</li>
+      <li>Pulsa Escuchar una vez. Sigue aunque nadie hable. Solo Pausar la detiene. Pausar no borra el texto: puedes seguir después.</li>
+      <li>Deja esta pestaña visible. Si cambias de app, el navegador puede cortar el micrófono.</li>
+      <li>Marca Importante, Duda o Tarea mientras explican. Una nota y Enter no pausa la clase.</li>
+      <li>Al terminar, pulsa Descargar. Si cierras el navegador sin descargar, el texto puede quedar solo en este navegador y en esta misma dirección.</li>
+    </ol>
+    <h3>Qué pasa con la voz</h3>
+    <p>Esta página no graba ni descarga audio. No hay archivo de voz que alguien pueda copiar después. Hay dos formas de obtener el texto:</p>
+    <ul>
+      <li><strong>En este dispositivo:</strong> Chrome transcribe en la computadora. La voz no se envía. A veces hay que descargar el español una sola vez.</li>
+      <li><strong>Por internet:</strong> empieza al instante. Chrome envía la voz a Google y esta app solo recibe el texto. No controlamos si Google guarda ese audio.</li>
+    </ul>
+    <p>Si la clase no es tuya, pide permiso antes de transcribir.</p>
+    <h3>Si no escucha bien</h3>
+    <ul>
+      <li>No abras el archivo directo desde la carpeta ni desde Archivos de la tablet. Ahí el micrófono queda bloqueado y no hay botón de permitir.</li>
+      <li>En tablet Android usa Chrome. En iPad usa Safari. Si ya tocaste Bloquear, el aviso no vuelve: hay que permitirlo en Ajustes. Pulsa Desbloquear micrófono para ver los pasos.</li>
+      <li>En el candado de la barra de direcciones, pon Micrófono en Permitir.</li>
+      <li>Si escribe mal, cambia la variante a Argentina o España.</li>
+      <li>En Ajustes puedes anotar palabras de la materia para que las reconozca mejor.</li>
+      <li>El texto ya escrito se puede corregir cuando está en pausa: toca el párrafo.</li>
+    </ul>
+    <h3>Atajos</h3>
+    <p>Cuando no estás escribiendo: P pausa o sigue, N párrafo nuevo, I importante, D duda, T tarea.</p>
+  </dialog>
+
+  <dialog id="settings" class="no-print">
+    <form method="dialog" class="help-top">
+      <h2>Ajustes</h2>
+      <button class="ghost" value="cerrar">Cerrar</button>
+    </form>
+    <fieldset>
+      <legend>De dónde sale el texto</legend>
+      <label class="choice"><input type="radio" name="mode" value="auto" checked> Intentar en este dispositivo y, si no se puede, preguntarme</label>
+      <label class="choice"><input type="radio" name="mode" value="local"> Solo en este dispositivo. La voz no sale</label>
+      <label class="choice"><input type="radio" name="mode" value="cloud"> Por internet, al instante. La voz va a Google y no se guarda audio aquí</label>
+    </fieldset>
+    <label class="block">Nuevo párrafo si hay una pausa de
+      <select id="gap">
+        <option value="4">4 segundos</option>
+        <option value="8" selected>8 segundos</option>
+        <option value="12">12 segundos</option>
+        <option value="20">20 segundos</option>
+        <option value="0">Solo cuando yo lo pida</option>
+      </select>
+    </label>
+    <label class="checkline"><input type="checkbox" id="opt-times" checked> Mostrar la hora de cada párrafo</label>
+    <label class="checkline"><input type="checkbox" id="opt-period" checked> Poner punto al cerrar un párrafo</label>
+    <label class="checkline"><input type="checkbox" id="opt-wake" checked> Mantener la pantalla despierta mientras escucha</label>
+    <label class="block">Palabras de la materia
+      <textarea id="glossary" spellcheck="false" placeholder="Una por línea. Para corregir una palabra mal oída:&#10;foto sintesis = fotosíntesis&#10;ciclo de Krebs"></textarea>
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="ghost" id="reprobe">Comprobar dispositivo</button>
+      <button type="button" class="ghost" id="apply-glossary">Corregir el apunte</button>
+    </div>
+  </dialog>
+
+  <dialog id="archive" class="no-print">
+    <form method="dialog" class="help-top">
+      <h2>Grados terminados</h2>
+      <button class="ghost" value="cerrar">Cerrar</button>
+    </form>
+    <div id="archive-list"></div>
+  </dialog>
+
+  <dialog id="mic-help" class="no-print">
+    <form method="dialog" class="help-top">
+      <h2>Desbloquear el micrófono</h2>
+      <button class="ghost" value="cerrar">Cerrar</button>
+    </form>
+    <p class="lead" id="mic-lead">La tablet no vuelve a preguntar si ya tocaste Bloquear. Sigue estos pasos y después recarga la página.</p>
+    <div class="device-switch" id="device-switch">
+      <button type="button" class="ghost" data-device="android">Tablet Android</button>
+      <button type="button" class="ghost" data-device="ipad">iPad</button>
+      <button type="button" class="ghost" data-device="preview">Estoy en el chat</button>
+    </div>
+    <ol id="mic-steps"></ol>
+    <button type="button" id="mic-ask">Pedir permiso otra vez</button>
+  </dialog>
+
+  <script>
+    const KEY = "apuntevivo-v1";
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const MARKS = {
+      importante: "★ Importante",
+      duda: "? Duda",
+      tarea: "✎ Tarea",
+      voz: "— Otra voz —"
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const appEl = $("app");
+    const titleInput = $("title");
+    const langSelect = $("lang");
+    const dateEl = $("date");
+    const statsEl = $("stats");
+    const savedEl = $("saved");
+    const pill = $("engine-pill");
+    const flow = $("flow");
+    const live = $("live");
+    const interimEl = $("interim");
+    const empty = $("empty");
+    const jump = $("jump");
+    const sheet = $("sheet");
+    const listenBtn = $("listen-btn");
+    const listenLabel = $("listen-label");
+    const clockEl = $("clock");
+    const substatus = $("substatus");
+    const noteInput = $("note");
+    const banner = $("banner");
+    const bannerText = $("banner-text");
+    const privacy = $("privacy");
+    const framebar = $("framebar");
+    const openTab = $("open-tab");
+    const toastEl = $("toast");
+    const askDialog = $("ask");
+    const askTitle = $("ask-title");
+    const askBody = $("ask-body");
+    const askActions = $("ask-actions");
+    const rememberRow = $("remember-row");
+    const rememberBox = $("remember");
+    const helpDialog = $("help");
+    const settingsDialog = $("settings");
+    const micHelp = $("mic-help");
+    const micLead = $("mic-lead");
+    const micSteps = $("mic-steps");
+    const glossaryEl = $("glossary");
+    const gapSelect = $("gap");
+    const fontLabel = $("font-label");
+
+    const state = {
+      title: "",
+      grade: "1",
+      lang: "es-PY",
+      theme: document.documentElement.getAttribute("data-theme") || "papel",
+      fontSize: 22,
+      showTimes: true,
+      period: true,
+      keepAwake: true,
+      mode: "auto",
+      silenceGap: 8,
+      cloudOk: false,
+      privacySeen: false,
+      glossaryRaw: "",
+      boosts: [],
+      replacements: [],
+      segments: [],
+      interim: "",
+      follow: true,
+      shouldListen: false,
+      listening: false,
+      preparing: false,
+      engineMode: null,
+      engineLang: "es-PY",
+      elapsedMs: 0,
+      clockAnchor: 0,
+      lastCommitAt: 0,
+      cycleStarted: 0,
+      forceNewPara: false,
+      downloaded: false,
+      naggedDownload: false,
+      restartDelay: 200,
+      netFails: 0,
+      modalOpen: false,
+      saveWarned: false
+    };
+
+    let rec = null;
+    let generation = 0;
+    let installToken = 0;
+    let probe = { status: "pending", lang: null, result: null };
+    let toastTimer = 0;
+    let saveTimer = 0;
+    let scrollingSelf = false;
+    let wakeLock = null;
+    let clockTimer = 0;
+    let startFails = 0;
+    let startAttempt = 0;
+    let warnedBg = false;
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+    }
+    function normalize(s) {
+      return String(s || "").replace(/\s+/g, " ").trim();
+    }
+    function escapeReg(s) {
+      return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+    function capitalize(s) {
+      const i = s.search(/\p{L}/u);
+      if (i < 0) return s;
+      return s.slice(0, i) + s.charAt(i).toLocaleUpperCase("es") + s.slice(i + 1);
+    }
+    function ensurePeriod(s) {
+      const t = s.trim();
+      if (!t || /[.!?…:;"»)]$/.test(t)) return t;
+      return t + ".";
+    }
+    function clock(ms) {
+      const s = Math.max(0, Math.floor(ms / 1000));
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const ss = s % 60;
+      return [h, m, ss].map((n) => String(n).padStart(2, "0")).join(":");
+    }
+    function stamp(ts) {
+      return new Date(ts).toLocaleTimeString("es-PY", { hour: "2-digit", minute: "2-digit" });
+    }
+    function localDateStamp() {
+      const d = new Date();
+      const p = (n) => String(n).padStart(2, "0");
+      return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+    }
+    function getElapsed() {
+      if (!state.shouldListen || !state.clockAnchor) return state.elapsedMs;
+      return state.elapsedMs + (Date.now() - state.clockAnchor);
+    }
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toastEl.hidden = true; }, 3200);
+    }
+    function showBanner(type, msg) {
+      banner.hidden = false;
+      banner.dataset.type = type;
+      bannerText.textContent = msg;
+    }
+    function hideBanner(type) {
+      if (type && banner.dataset.type !== type) return;
+      banner.hidden = true;
+    }
+    function setPill(kind, text) {
+      pill.className = "pill" + (kind ? " " + kind : "");
+      pill.textContent = text;
+    }
+    function wordsOf(s) {
+      return (String(s).trim().match(/\S+/g) || []).length;
+    }
+    function lastSpeech() {
+      for (let i = state.segments.length - 1; i >= 0; i--) {
+        if (state.segments[i].kind === "speech") return state.segments[i];
+      }
+      return null;
+    }
+    function recentTail() {
+      return state.segments.filter((s) => s.kind === "speech").map((s) => s.text).join(" ").slice(-180);
+    }
+    function stripOverlap(prev, next) {
+      if (!prev || !next) return next;
+      const norm = (s) => s.toLowerCase().replace(/\s+/g, " ").trim();
+      const p = norm(prev);
+      const n = norm(next);
+      if (!n) return "";
+      if (p.endsWith(n) && n.length > 8) return "";
+      if (n.startsWith(p) && p.length > 10) {
+        const cut = n.length - p.length;
+        return next.slice(Math.max(0, next.length - cut)).replace(/^\s+/, "");
+      }
+      const max = Math.min(p.length, n.length, 120);
+      for (let len = max; len >= 12; len--) {
+        if (p.slice(-len) === n.slice(0, len)) return next.slice(len).replace(/^\s+/, "");
+      }
+      return next;
+    }
+    function parseGlossary(raw) {
+      const boosts = [];
+      const replacements = [];
+      String(raw || "").split("\n").forEach((line) => {
+        const t = line.trim();
+        if (!t || t.startsWith("#")) return;
+        const eq = t.indexOf("=");
+        if (eq > 0) {
+          const from = t.slice(0, eq).trim();
+          const to = t.slice(eq + 1).trim();
+          if (from.length >= 3 && to) replacements.push({ from, to });
+        } else if (t.length >= 2 && t.length <= 60) {
+          boosts.push(t);
+        }
+      });
+      return { boosts: boosts.slice(0, 20), replacements: replacements.slice(0, 80) };
+    }
+    function applyGlossary(text) {
+      try {
+        let out = text;
+        state.replacements.forEach((rule) => {
+          const re = new RegExp("(^|[^\\p{L}\\p{N}])(" + escapeReg(rule.from) + ")(?=[^\\p{L}\\p{N}]|$)", "giu");
+          out = out.replace(re, (m, pre) => pre + rule.to);
+        });
+        return out;
+      } catch (e) {
+        return text;
+      }
+    }
+    function syncGlossaryFromBox() {
+      const parsed = parseGlossary(glossaryEl.value);
+      state.boosts = parsed.boosts;
+      state.replacements = parsed.replacements;
+      state.glossaryRaw = glossaryEl.value;
+    }
+
+    function snapshot() {
+      return {
+        v: 1,
+        title: state.title,
+        grade: state.grade,
+        lang: state.lang,
+        theme: state.theme,
+        fontSize: state.fontSize,
+        showTimes: state.showTimes,
+        period: state.period,
+        keepAwake: state.keepAwake,
+        mode: state.mode,
+        silenceGap: state.silenceGap,
+        cloudOk: state.cloudOk,
+        privacySeen: state.privacySeen,
+        glossaryRaw: state.glossaryRaw,
+        segments: state.segments,
+        elapsedMs: getElapsed(),
+        savedAt: Date.now()
+      };
+    }
+    function save() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(snapshot()));
+        savedEl.textContent = state.segments.length ? "Guardado en este navegador" : "Todavía no hay texto";
+      } catch (e) {
+        savedEl.textContent = "No se pudo guardar — descarga el apunte";
+        if (!state.saveWarned) {
+          state.saveWarned = true;
+          toast("El navegador no dejó guardar. Descarga el texto antes de cerrar.");
+        }
+      }
+    }
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(save, 250);
+    }
+    function loadSaved() {
+      try {
+        const raw = localStorage.getItem(KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    function applySaved(data) {
+      if (!data || typeof data !== "object") return;
+      if (typeof data.title === "string") state.title = data.title;
+      if (typeof data.grade === "string") state.grade = data.grade;
+      if (typeof data.lang === "string" && langSelect.querySelector('option[value="' + data.lang + '"]')) state.lang = data.lang;
+      if (data.theme === "tinta" || data.theme === "papel") state.theme = data.theme;
+      if (typeof data.fontSize === "number") state.fontSize = Math.min(36, Math.max(16, data.fontSize));
+      if (typeof data.showTimes === "boolean") state.showTimes = data.showTimes;
+      if (typeof data.period === "boolean") state.period = data.period;
+      if (typeof data.keepAwake === "boolean") state.keepAwake = data.keepAwake;
+      if (data.mode === "auto" || data.mode === "local" || data.mode === "cloud") state.mode = data.mode;
+      if (typeof data.silenceGap === "number" && data.silenceGap >= 0) state.silenceGap = data.silenceGap;
+      if (typeof data.cloudOk === "boolean") state.cloudOk = data.cloudOk;
+      if (typeof data.privacySeen === "boolean") state.privacySeen = data.privacySeen;
+      if (typeof data.glossaryRaw === "string") state.glossaryRaw = data.glossaryRaw;
+      if (typeof data.elapsedMs === "number" && data.elapsedMs >= 0) state.elapsedMs = data.elapsedMs;
+      if (Array.isArray(data.segments)) {
+        state.segments = data.segments.filter((s) => s && (s.kind === "speech" || s.kind === "mark")).map((s) => ({
+          id: s.id || uid(),
+          kind: s.kind,
+          text: String(s.text || ""),
+          label: String(s.label || ""),
+          markType: s.markType || "nota",
+          t: typeof s.t === "number" ? s.t : Date.now(),
+          edited: !!s.edited
+        })).filter((s) => s.kind === "mark" ? s.label : s.text);
+      }
+      const parsed = parseGlossary(state.glossaryRaw);
+      state.boosts = parsed.boosts;
+      state.replacements = parsed.replacements;
+    }
+
+    function applyTheme(theme) {
+      state.theme = theme === "tinta" ? "tinta" : "papel";
+      document.documentElement.setAttribute("data-theme", state.theme);
+      $("theme-btn").textContent = state.theme === "tinta" ? "Tema claro" : "Tema oscuro";
+    }
+    function applyFont() {
+      document.documentElement.style.setProperty("--text", state.fontSize + "px");
+      fontLabel.textContent = String(state.fontSize);
+    }
+    function syncControls() {
+      titleInput.value = state.title;
+      if ($("grado") && $("grado").querySelector('option[value="' + state.grade + '"]')) $("grado").value = state.grade;
+      langSelect.value = state.lang;
+      gapSelect.value = String(state.silenceGap == null ? 8 : state.silenceGap);
+      $("opt-times").checked = state.showTimes;
+      $("opt-period").checked = state.period;
+      $("opt-wake").checked = state.keepAwake;
+      glossaryEl.value = state.glossaryRaw;
+      const radio = document.querySelector('input[name="mode"][value="' + state.mode + '"]');
+      if (radio) radio.checked = true;
+      privacy.hidden = !!state.privacySeen;
+      applyTheme(state.theme);
+      applyFont();
+      document.title = state.title.trim() ? state.title.trim() + " — ApunteVivo" : "ApunteVivo — transcripción de clase";
+    }
+    function renderDate() {
+      dateEl.textContent = new Date().toLocaleDateString("es-PY", {
+        weekday: "long", day: "numeric", month: "long", year: "numeric"
+      });
+    }
+    function updateStats() {
+      const speech = state.segments.filter((s) => s.kind === "speech").map((s) => s.text).join(" ");
+      const n = wordsOf(speech + " " + (state.interim || ""));
+      statsEl.textContent = n.toLocaleString("es-PY") + (n === 1 ? " palabra" : " palabras");
+      clockEl.textContent = clock(getElapsed());
+    }
+    function syncEmpty() {
+      empty.hidden = state.segments.length > 0 || state.shouldListen;
+    }
+    function renderInterim() {
+      const on = state.shouldListen;
+      const text = state.interim;
+      live.hidden = !on && !text;
+      interimEl.textContent = text || (on ? "Escuchando…" : "");
+      interimEl.classList.toggle("waiting", !text);
+      syncEmpty();
+    }
+    function maybeScroll(force) {
+      if (!force && !state.follow) return;
+      scrollingSelf = true;
+      sheet.scrollTop = sheet.scrollHeight;
+      setTimeout(() => { scrollingSelf = false; }, 90);
+    }
+    function updateSegmentDOM(seg) {
+      const node = document.getElementById("seg-" + seg.id);
+      if (!node) return;
+      const p = node.querySelector("p");
+      if (!p || document.activeElement === p) return;
+      const value = seg.kind === "mark" ? seg.label : seg.text;
+      if (p.textContent !== value) p.textContent = value;
+      const time = node.querySelector("time");
+      if (time) time.hidden = !state.showTimes;
+    }
+    function removeSeg(id) {
+      state.segments = state.segments.filter((s) => s.id !== id);
+      const node = document.getElementById("seg-" + id);
+      if (node) node.remove();
+      syncEmpty();
+      updateStats();
+      scheduleSave();
+    }
+    function appendSegmentDOM(seg, fresh) {
+      const el = document.createElement("article");
+      el.className = "para" + (seg.kind === "mark" ? " para-mark para-" + (seg.markType || "nota") : "");
+      if (fresh) el.classList.add("fresh");
+      el.id = "seg-" + seg.id;
+      const time = document.createElement("time");
+      time.textContent = stamp(seg.t);
+      time.dateTime = new Date(seg.t).toISOString();
+      time.hidden = !state.showTimes;
+      const p = document.createElement("p");
+      p.textContent = seg.kind === "mark" ? seg.label : seg.text;
+      if (seg.kind === "speech") {
+        p.lang = "es";
+        p.spellcheck = true;
+        p.contentEditable = state.shouldListen ? "false" : "true";
+        p.addEventListener("input", () => {
+          seg.edited = true;
+          seg.text = p.innerText.replace(/\u00a0/g, " ").trim();
+          updateStats();
+          scheduleSave();
+        });
+        p.addEventListener("blur", () => {
+          seg.text = normalize(p.innerText);
+          if (!seg.text) removeSeg(seg.id);
+          else {
+            p.textContent = seg.text;
+            scheduleSave();
+          }
+        });
+      }
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "del";
+      del.setAttribute("aria-label", "Quitar este párrafo");
+      del.textContent = "×";
+      del.addEventListener("click", () => removeSeg(seg.id));
+      el.append(time, p, del);
+      flow.appendChild(el);
+      syncEmpty();
+    }
+    function renderAll() {
+      flow.innerHTML = "";
+      state.segments.forEach((seg) => appendSegmentDOM(seg, false));
+      renderInterim();
+      updateStats();
+      savedEl.textContent = state.segments.length ? "Guardado en este navegador" : "Todavía no hay texto";
+    }
+    function setEditableMode() {
+      flow.querySelectorAll(".para p").forEach((p) => {
+        if (p.closest(".para-mark")) return;
+        p.contentEditable = state.shouldListen ? "false" : "true";
+      });
+    }
+    function refreshTimes() {
+      flow.querySelectorAll("time").forEach((t) => { t.hidden = !state.showTimes; });
+      const liveTime = live.querySelector("time");
+      if (liveTime) liveTime.hidden = !state.showTimes;
+    }
+
+    function normKey(s) {
+      return String(s || "")
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^\p{L}\p{N}\s]/gu, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    function cleanSavedText(text) {
+      const lines = String(text || "").split("\n");
+      const out = [];
+      let prev = "";
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          out.push("");
+          continue;
+        }
+        const clean = dedupeWords(trimmed);
+        const key = normKey(clean);
+        const long = key.split(" ").length >= 4;
+        if (long && key === prev) continue;
+        if (long) prev = key;
+        out.push(clean);
+      }
+      return out.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+    }
+    function dedupeWords(text) {
+      const raw = String(text || "").split(/\s+/).filter(Boolean);
+      const out = [];
+      const keys = [];
+      for (const word of raw) {
+        const key = normKey(word);
+        if (!key) continue;
+        out.push(word);
+        keys.push(key);
+        let folded = true;
+        let guard = 0;
+        while (folded && keys.length >= 4 && guard < 8) {
+          folded = false;
+          guard++;
+          const max = Math.floor(keys.length / 2);
+          for (let size = max; size >= 2; size--) {
+            const a = keys.slice(-size * 2, -size).join(" ");
+            const b = keys.slice(-size).join(" ");
+            if (a && a === b) {
+              out.splice(out.length - size, size);
+              keys.splice(keys.length - size, size);
+              folded = true;
+              break;
+            }
+          }
+        }
+      }
+      return out.join(" ");
+    }
+    function onlyNewTail(prev, incoming) {
+      const pw = normKey(prev).split(" ").filter(Boolean);
+      const pieces = String(incoming || "").split(/\s+/).filter(Boolean);
+      const nw = pieces.map((w) => normKey(w));
+      if (!nw.length) return "";
+      const n = nw.join(" ");
+      const p = pw.join(" ");
+      if (!p) return dedupeWords(incoming);
+      if (p === n || p.endsWith(n) || (n.length > 10 && p.includes(" " + n))) return "";
+      const max = Math.min(pw.length, nw.length);
+      for (let len = max; len >= 3; len--) {
+        if (pw.slice(-len).join(" ") === nw.slice(0, len).join(" ")) {
+          return dedupeWords(pieces.slice(len).join(" "));
+        }
+      }
+      return dedupeWords(incoming);
+    }
+    function cleanupVisibleRepeats() {
+      let prev = "";
+      const next = [];
+      let changed = false;
+      for (const seg of state.segments) {
+        if (seg.kind !== "speech") {
+          next.push(seg);
+          continue;
+        }
+        const text = dedupeWords(seg.text);
+        const key = normKey(text);
+        if (!key || key === prev) {
+          changed = true;
+          continue;
+        }
+        if (text !== seg.text) {
+          seg.text = text;
+          changed = true;
+        }
+        next.push(seg);
+        prev = key;
+      }
+      if (changed) {
+        state.segments = next;
+        renderAll();
+        scheduleSave();
+      }
+    }
+    function commit(raw) {
+      let text = dedupeWords(normalize(applyGlossary(raw)));
+      if (!text) return;
+      const now = Date.now();
+      const speech = lastSpeech();
+      const incomingKey = normKey(text);
+      if (speech && !speech.edited && incomingKey) {
+        const speechKey = normKey(speech.text);
+        if (speechKey === incomingKey || (incomingKey.length > 8 && speechKey.includes(incomingKey))) {
+          state.lastCommitAt = now;
+          return;
+        }
+        if (speechKey.length > 8 && incomingKey.startsWith(speechKey)) {
+          speech.text = capitalize(text);
+          updateSegmentDOM(speech);
+          state.lastCommitAt = now;
+          state.forceNewPara = false;
+          updateStats();
+          scheduleSave();
+          maybeScroll();
+          return;
+        }
+        const extra = onlyNewTail(speech.text, text);
+        if (!extra) {
+          state.lastCommitAt = now;
+          return;
+        }
+        text = extra;
+      }
+      const last = state.segments[state.segments.length - 1];
+      const gapSec = Number(gapSelect.value);
+      const silent = gapSec > 0 && state.lastCommitAt && (now - state.lastCommitAt) > gapSec * 1000;
+      const long = !!(last && last.kind === "speech" && last.text.length > 700);
+      const startNew = state.forceNewPara || !last || last.kind !== "speech" || last.edited || silent || long;
+      const breakForSilence = state.forceNewPara || silent;
+      if (startNew && last && last.kind === "speech" && state.period && breakForSilence) {
+        last.text = ensurePeriod(last.text);
+        updateSegmentDOM(last);
+      }
+      if (startNew) {
+        if (!(long && !breakForSilence)) text = capitalize(text);
+        const seg = { id: uid(), kind: "speech", text, t: now, edited: false };
+        state.segments.push(seg);
+        appendSegmentDOM(seg, true);
+      } else {
+        last.text = dedupeWords(last.text.replace(/\s+$/, "") + " " + text.replace(/^\s+/, ""));
+        updateSegmentDOM(last);
+      }
+      state.forceNewPara = false;
+      state.lastCommitAt = now;
+      updateStats();
+      scheduleSave();
+      maybeScroll();
+    }
+
+    function addMark(type, custom) {
+      const label = type === "nota" ? "Nota: " + custom : MARKS[type];
+      if (!label) return;
+      const seg = { id: uid(), kind: "mark", markType: type, label, t: Date.now() };
+      state.segments.push(seg);
+      state.forceNewPara = true;
+      appendSegmentDOM(seg, true);
+      updateStats();
+      scheduleSave();
+      maybeScroll(true);
+    }
+    function newParagraph() {
+      state.forceNewPara = true;
+      const last = lastSpeech();
+      if (last && state.period) {
+        last.text = ensurePeriod(last.text);
+        updateSegmentDOM(last);
+        scheduleSave();
+      }
+      toast("El próximo texto irá en un párrafo nuevo");
+    }
+
+    function buildText() {
+      const title = state.title.trim() || "Apunte de clase";
+      const when = new Date().toLocaleString("es-PY", {
+        weekday: "long", day: "numeric", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+      });
+      const lines = [gradeLabel(state.grade), title, when, "Escucha: " + clock(getElapsed()), ""];
+      let prevSpeech = "";
+      state.segments.forEach((seg) => {
+        const prefix = state.showTimes ? "[" + stamp(seg.t) + "] " : "";
+        if (seg.kind === "mark") {
+          lines.push(prefix + seg.label, "");
+          return;
+        }
+        const clean = dedupeWords(seg.text);
+        const key = normKey(clean);
+        if (!key || key === prevSpeech) return;
+        prevSpeech = key;
+        lines.push(prefix + clean, "");
+      });
+      lines.push("Generado con ApunteVivo. No se guardó audio.");
+      return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+    }
+    function slugPart(s) {
+      return String(s || "")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+    }
+    function fileSlug() {
+      const base = slugPart(gradeLabel(state.grade) + "-" + (state.title || "clase")) || "clase";
+      return "apunte-" + base + "-" + localDateStamp() + ".txt";
+    }
+    function gradeLabel(id) {
+      const el = document.querySelector('#grado option[value="' + (id || state.grade) + '"]');
+      return el ? el.textContent : "Grado";
+    }
+    function nextGrade(id) {
+      const options = Array.from(document.querySelectorAll("#grado option")).map((o) => o.value);
+      const i = options.indexOf(id);
+      if (i >= 0 && i < options.length - 1) return options[i + 1];
+      return id;
+    }
+    const GRADES_KEY = "apuntevivo-grados-v1";
+    function loadArchive() {
+      try {
+        const list = JSON.parse(localStorage.getItem(GRADES_KEY) || "[]");
+        return Array.isArray(list) ? list : [];
+      } catch (e) {
+        return [];
+      }
+    }
+    function saveArchive(list) {
+      localStorage.setItem(GRADES_KEY, JSON.stringify(list.slice(0, 40)));
+    }
+    function downloadBlob(filename, text) {
+      const blob = new Blob(["\uFEFF" + text], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+    }
+    function renderArchive() {
+      const list = loadArchive();
+      const box = $("archive-list");
+      box.replaceChildren();
+      $("grades-btn").textContent = list.length ? "Grados guardados (" + list.length + ")" : "Grados guardados";
+      if (!list.length) {
+        const p = document.createElement("p");
+        p.textContent = "Todavía no terminaste ningún grado. Pulsa Terminar este grado cuando cierres la clase.";
+        box.appendChild(p);
+        return;
+      }
+      list.forEach((item) => {
+        const row = document.createElement("article");
+        row.className = "grade-item";
+        const p = document.createElement("p");
+        const when = new Date(item.finishedAt).toLocaleString("es-PY", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+        p.textContent = item.gradeLabel + (item.title ? " · " + item.title : "") + " · " + when;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ghost";
+        btn.textContent = "Descargar";
+        btn.addEventListener("click", () => downloadBlob(item.filename || "apunte.txt", cleanSavedText(item.text || "")));
+        row.append(p, btn);
+        box.appendChild(row);
+      });
+    }
+    function stopForFinish() {
+      const leftover = normalize(state.interim);
+      state.shouldListen = false;
+      startAttempt = 0;
+      generation += 1;
+      try { if (rec) rec.abort(); } catch (e) {}
+      stopClock();
+      releaseWakeLock();
+      state.interim = "";
+      if (leftover) commit(leftover);
+      setUiPaused();
+    }
+    function resetCurrentSheet() {
+      state.segments = [];
+      state.elapsedMs = 0;
+      state.clockAnchor = 0;
+      state.interim = "";
+      state.forceNewPara = false;
+      state.downloaded = false;
+      state.lastCommitAt = 0;
+      flow.innerHTML = "";
+      renderInterim();
+      updateStats();
+    }
+    function finishGrade() {
+      if (state.shouldListen || state.interim) stopForFinish();
+      cleanupVisibleRepeats();
+      const hasText = state.segments.some((s) => (s.kind === "speech" && s.text.trim()) || (s.kind === "mark" && s.label));
+      if (!hasText) {
+        toast("Este grado todavía no tiene texto. Pulsa Escuchar o elige otro grado.");
+        return;
+      }
+      const text = buildText();
+      const finishedLabel = gradeLabel(state.grade);
+      const entry = {
+        id: uid(),
+        grade: state.grade,
+        gradeLabel: finishedLabel,
+        title: state.title.trim(),
+        text: text,
+        filename: fileSlug(),
+        elapsedMs: state.elapsedMs,
+        finishedAt: Date.now()
+      };
+      try {
+        const list = loadArchive();
+        list.unshift(entry);
+        saveArchive(list);
+      } catch (e) {
+        toast("No pude guardar el grado en la tablet. Igual se descarga el archivo.");
+      }
+      downloadBlob(entry.filename, text);
+      state.downloaded = true;
+      const following = nextGrade(state.grade);
+      state.grade = following;
+      if ($("grado")) $("grado").value = following;
+      resetCurrentSheet();
+      save();
+      renderArchive();
+      toast(finishedLabel + " terminado y guardado. Ya puedes transcribir " + gradeLabel(following) + ".");
+      $("grado").focus();
+    }
+    async function copyText() {
+      const text = buildText();
+      try {
+        await navigator.clipboard.writeText(text);
+        toast("Apunte copiado");
+      } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy"); toast("Apunte copiado"); }
+        catch (err) { toast("No pude copiar. Prueba Descargar."); }
+        ta.remove();
+      }
+    }
+    function downloadText() {
+      cleanupVisibleRepeats();
+      downloadBlob(fileSlug(), buildText());
+      state.downloaded = true;
+      toast("Apunte descargado. Es solo texto. Para pasar a otro grado, pulsa Terminar.");
+    }
+    function printNotes() {
+      $("print-title").textContent = state.title.trim() || "Apunte de clase";
+      $("print-meta").textContent = dateEl.textContent + " · " + clock(getElapsed()) + " de escucha · sin audio guardado";
+      document.title = (state.title.trim() || "Apunte de clase") + " — ApunteVivo";
+      window.print();
+    }
+
+    function closeAsk() {
+      state.modalOpen = false;
+      if (askDialog.open) askDialog.close();
+    }
+    function showChoice(title, body, buttons, withRemember) {
+      askTitle.textContent = title;
+      askBody.textContent = body;
+      rememberRow.hidden = !withRemember;
+      askActions.replaceChildren();
+      buttons.forEach((b) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = b.primary ? "primary" : "ghost";
+        btn.textContent = b.label;
+        btn.addEventListener("click", () => {
+          const remember = rememberBox.checked;
+          closeAsk();
+          b.onClick(remember);
+        });
+        askActions.appendChild(btn);
+      });
+      state.modalOpen = true;
+      try {
+        askDialog.showModal();
+      } catch (e) {
+        state.modalOpen = false;
+        const ok = window.confirm(title + "\n\n" + body);
+        if (ok && buttons[0]) buttons[0].onClick(true);
+      }
+    }
+
+    function updateEnginePillIdle() {
+      if (state.shouldListen) return;
+      if (state.mode === "cloud") {
+        setPill("cloud", state.cloudOk ? "Por internet · sin archivo de audio" : "Por internet, si tú lo aceptas");
+        return;
+      }
+      if (probe.status === "pending") {
+        setPill("", "Comprobando el dispositivo…");
+        return;
+      }
+      if (probe.result === "available") {
+        setPill("local", "Listo en este dispositivo");
+        return;
+      }
+      if (probe.result === "downloadable" || probe.result === "downloading") {
+        setPill("", "Falta descargar el español al dispositivo");
+        return;
+      }
+      if (state.mode === "local") {
+        setPill("", "Este navegador no trae reconocimiento local");
+        return;
+      }
+      setPill("cloud", "Se usará internet si tú lo aceptas");
+    }
+
+    function withTimeout(promise, ms) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms))
+      ]);
+    }
+    async function checkOne(lang) {
+      try {
+        return await SR.available({ langs: [lang], processLocally: true, quality: "dictation" });
+      } catch (e) {
+        return SR.available({ langs: [lang], processLocally: true });
+      }
+    }
+    async function probeInBackground() {
+      probe = { status: "pending", lang: null, result: null };
+      updateEnginePillIdle();
+      if (!SR || typeof SR.available !== "function") {
+        probe = { status: "none", lang: null, result: null };
+        updateEnginePillIdle();
+        return;
+      }
+      const langs = [...new Set([state.lang, "es-ES", "es-MX", "es-US", "es-AR"])];
+      let found = null;
+      try {
+        const checks = await Promise.all(langs.map(async (lang) => {
+          try {
+            const result = await withTimeout(checkOne(lang), 3500);
+            return { lang, result };
+          } catch (e) {
+            return { lang, result: "error" };
+          }
+        }));
+        const available = checks.find((c) => c.result === "available" && c.lang === state.lang)
+          || checks.find((c) => c.result === "available");
+        const download = checks.find((c) => (c.result === "downloadable" || c.result === "downloading") && c.lang === state.lang)
+          || checks.find((c) => c.result === "downloadable" || c.result === "downloading");
+        found = available || download || null;
+      } catch (e) {
+        found = null;
+      }
+      probe = found
+        ? { status: "done", lang: found.lang, result: found.result }
+        : { status: "none", lang: null, result: null };
+      updateEnginePillIdle();
+    }
+    async function installLang(lang) {
+      try {
+        return await SR.install({ langs: [lang], processLocally: true, quality: "dictation" });
+      } catch (e) {
+        try {
+          return await SR.install({ langs: [lang], processLocally: true });
+        } catch (err) {
+          return false;
+        }
+      }
+    }
+    function doInstall() {
+      const token = ++installToken;
+      const lang = probe.lang || state.lang;
+      state.preparing = true;
+      listenLabel.textContent = "Descargando…";
+      showBanner("install", "Descargando el español para transcribir en este dispositivo, sin enviar la voz. Puede tardar. No cierres la pestaña.");
+      installLang(lang).then((ok) => {
+        state.preparing = false;
+        hideBanner("install");
+        if (listenLabel.textContent === "Descargando…") listenLabel.textContent = "Escuchar";
+        if (ok) {
+          probe = { status: "done", lang, result: "available" };
+          updateEnginePillIdle();
+          if (token === installToken) toast("Español listo en este dispositivo. Pulsa Escuchar.");
+        } else if (token === installToken) {
+          toast("No se pudo descargar el idioma.");
+          if (state.mode === "auto") offerCloud();
+        }
+      });
+    }
+
+    function engineStatusText() {
+      if (state.engineMode === "local") {
+        const extra = state.engineLang && state.engineLang !== state.lang ? " · variante " + state.engineLang : "";
+        return "En este dispositivo" + extra + " · la voz no se envía · sin archivo de audio";
+      }
+      return "Por internet · sin archivo de audio · la voz va a Google solo para devolver texto";
+    }
+    function setUiListening() {
+      appEl.classList.add("is-live");
+      listenBtn.classList.add("is-on");
+      listenBtn.setAttribute("aria-pressed", "true");
+      listenLabel.textContent = "Pausar";
+      substatus.textContent = engineStatusText();
+      setPill(state.engineMode === "local" ? "local" : "cloud", state.engineMode === "local" ? "En el dispositivo" : "Por internet");
+      setEditableMode();
+      renderInterim();
+    }
+    function setUiPaused() {
+      appEl.classList.remove("is-live");
+      listenBtn.classList.remove("is-on");
+      listenBtn.setAttribute("aria-pressed", "false");
+      if (!state.preparing) listenLabel.textContent = "Escuchar";
+      substatus.textContent = state.segments.length
+        ? "En pausa. Escuchar sigue en este grado. Terminar lo guarda y pasa al siguiente."
+        : "Pausar no cierra el grado. Terminar lo guarda y abre el siguiente.";
+      setEditableMode();
+      renderInterim();
+      updateEnginePillIdle();
+      updateStats();
+    }
+    function startClock() {
+      if (!state.clockAnchor) state.clockAnchor = Date.now();
+      clearInterval(clockTimer);
+      clockTimer = setInterval(updateStats, 250);
+    }
+    function stopClock() {
+      if (state.clockAnchor) {
+        state.elapsedMs += Date.now() - state.clockAnchor;
+        state.clockAnchor = 0;
+      }
+      clearInterval(clockTimer);
+      updateStats();
+    }
+    async function requestWakeLock() {
+      if (!state.keepAwake || !("wakeLock" in navigator)) return;
+      try { wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {}
+    }
+    function releaseWakeLock() {
+      try { if (wakeLock) wakeLock.release(); } catch (e) {}
+      wakeLock = null;
+    }
+    function applyPhrases(r) {
+      if (!state.boosts.length || typeof window.SpeechRecognitionPhrase !== "function") return;
+      try {
+        r.phrases = state.boosts.map((p) => new SpeechRecognitionPhrase(p, 5));
+      } catch (e) {}
+    }
+    function makeRecognizer() {
+      const r = new SR();
+      r.lang = state.engineLang || state.lang;
+      r.continuous = !/Android/i.test(navigator.userAgent || "");
+      r.interimResults = true;
+      r.maxAlternatives = 1;
+      if (state.engineMode === "local") {
+        try { r.processLocally = true; } catch (e) {}
+      }
+      applyPhrases(r);
+      return r;
+    }
+    function handleResult(event) {
+      let interim = "";
+      const finals = [];
+      const from = Number.isInteger(event.resultIndex) ? event.resultIndex : 0;
+      for (let i = from; i < event.results.length; i++) {
+        const piece = event.results[i][0].transcript || "";
+        if (event.results[i].isFinal) finals.push(piece);
+        else interim += piece;
+      }
+      if (finals.length) {
+        let best = finals[0];
+        for (let i = 1; i < finals.length; i++) {
+          const a = normKey(best);
+          const b = normKey(finals[i]);
+          if (!a || (b && b.length > a.length)) best = finals[i];
+          else if (b && !a.includes(b) && !b.includes(a)) best = best + " " + finals[i];
+        }
+        commit(best);
+      }
+      state.interim = normalize(interim);
+      if (finalText.trim() || interim.trim()) {
+        state.netFails = 0;
+        state.restartDelay = 200;
+        hideBanner("network");
+      }
+      renderInterim();
+      updateStats();
+      maybeScroll();
+    }
+    function handleError(err) {
+      if (!err || err === "aborted" || err === "no-speech") return;
+      if (err === "not-allowed" || err === "service-not-allowed") {
+        hardStop();
+        openMicHelp(inFrame() ? "preview" : "denied");
+        return;
+      }
+      if (err === "audio-capture") {
+        hardStop();
+        showBanner("mic", "No encuentro un micrófono. Revisa que esté conectado y que otra app no lo esté usando.");
+        return;
+      }
+      if (err === "language-not-supported") {
+        hardStop();
+        if (state.engineMode === "local" && state.mode !== "local") offerCloud();
+        else showBanner("lang", "Esta variante no está disponible. Prueba Español (España) o Español (Argentina).");
+        return;
+      }
+      if (err === "network") {
+        state.netFails += 1;
+        state.restartDelay = Math.min(8000, 800 * state.netFails);
+        showBanner("network", "Sin conexión con el reconocimiento. El texto ya escrito sigue aquí. Cuando vuelva internet, sigue solo. No se guardó audio.");
+      }
+    }
+    function startCycle() {
+      if (!state.shouldListen || !SR) return;
+      const myGen = ++generation;
+      let r;
+      try { r = makeRecognizer(); }
+      catch (e) {
+        showBanner("err", "Este navegador no pudo iniciar el reconocimiento. Ábrelo en Chrome o Edge.");
+        hardStop();
+        return;
+      }
+      rec = r;
+      r.onstart = () => {
+        if (myGen !== generation) return;
+        state.listening = true;
+        startFails = 0;
+        state.cycleStarted = Date.now();
+        substatus.textContent = engineStatusText();
+      };
+      r.onresult = (event) => {
+        if (myGen !== generation) return;
+        handleResult(event);
+      };
+      r.onerror = (event) => {
+        if (myGen !== generation) return;
+        handleError(event.error);
+      };
+      r.onend = () => {
+        if (myGen !== generation) return;
+        state.listening = false;
+        startAttempt = 0;
+        if (!state.shouldListen) return;
+        setTimeout(() => {
+          if (state.shouldListen && myGen === generation) startCycle();
+        }, state.restartDelay || 200);
+      };
+      try {
+        startAttempt = Date.now();
+        r.start();
+      } catch (e) {
+        startAttempt = 0;
+        startFails += 1;
+        if (state.shouldListen && startFails < 6) {
+          setTimeout(() => {
+            if (state.shouldListen) startCycle();
+          }, 450);
+        } else {
+          hardStop();
+          showBanner("mic", "No pude abrir el micrófono. Pulsa Escuchar otra vez y acepta el permiso.");
+        }
+      }
+    }
+    function startEngine(mode, lang) {
+      if (!SR) return;
+      if (location.protocol === "file:") {
+        showBanner("file", "Chrome bloquea el micrófono si abres el archivo desde la carpeta. Usa iniciar.bat o iniciar.sh, o el enlace de la vista previa en una pestaña nueva.");
+        return;
+      }
+      state.engineMode = mode;
+      state.engineLang = lang || state.lang;
+      state.shouldListen = true;
+      state.preparing = false;
+      hideBanner("mic");
+      startClock();
+      requestWakeLock();
+      setUiListening();
+      startCycle();
+      save();
+    }
+    function hardStop() {
+      state.shouldListen = false;
+      state.listening = false;
+      state.preparing = false;
+      generation += 1;
+      try { if (rec) rec.abort(); } catch (e) {}
+      stopClock();
+      releaseWakeLock();
+      setUiPaused();
+    }
+    function pauseListening() {
+      const leftover = state.interim;
+      state.shouldListen = false;
+      startAttempt = 0;
+      try { if (rec) rec.stop(); } catch (e) {}
+      stopClock();
+      releaseWakeLock();
+      setUiPaused();
+      setTimeout(() => {
+        generation += 1;
+        const text = normalize(state.interim || leftover || "");
+        state.interim = "";
+        renderInterim();
+        if (text) commit(text);
+        save();
+      }, 800);
+      if (!state.naggedDownload && getElapsed() > 5 * 60 * 1000 && state.segments.length && !state.downloaded) {
+        state.naggedDownload = true;
+        toast("En pausa. Si la clase terminó, descarga una copia.");
+      }
+    }
+    function offerCloud() {
+      showChoice(
+        "Transcribir por internet",
+        "Esta app no guarda audio.\n\nTu navegador no puede hacerlo solo en este dispositivo para este idioma. La alternativa instantánea es el reconocimiento de Chrome: la voz se envía a Google y vuelve como texto. No se crea un archivo de audio.\n\n¿Quieres usarlo así?",
+        [
+          { id: "yes", label: "Sí, transcribir", primary: true, onClick: (remember) => {
+            if (remember) state.cloudOk = true;
+            save();
+            startEngine("cloud", state.lang);
+          }},
+          { id: "no", label: "Ahora no", onClick: () => {} }
+        ],
+        true
+      );
+    }
+    function offerDownloadOrCloud() {
+      const buttons = [
+        { id: "dl", label: "Descargar español", primary: true, onClick: () => doInstall() }
+      ];
+      if (state.mode !== "local") {
+        buttons.push({ id: "cloud", label: "Usar por internet", onClick: (remember) => {
+          if (remember) state.cloudOk = true;
+          save();
+          startEngine("cloud", state.lang);
+        }});
+      }
+      buttons.push({ id: "no", label: "Ahora no", onClick: () => {} });
+      showChoice(
+        "Transcribir en este dispositivo",
+        "Así la voz no sale de tu computadora y no se guarda audio. Chrome descargará el español una sola vez. Puede tardar.\n\nCuando termine, pulsa Escuchar.\n\nSi prefieres empezar ya, puedes usar internet: la voz va a Google y esta app solo recibe el texto.",
+        buttons,
+        true
+      );
+    }
+    const MIC_GUIDES = {
+      android: {
+        lead: "En una tablet Android el permiso está en dos lugares: en la tablet y en Chrome. Si ya tocaste Bloquear, el aviso no vuelve solo.",
+        steps: [
+          "Abre la app Chrome, el círculo de colores. No uses el navegador de dentro del chat, de WhatsApp ni de Facebook.",
+          "No abras ApunteVivo desde Archivos o Descargas. En un archivo la tablet no deja desbloquear el micrófono.",
+          "Ve a Ajustes de la tablet → Aplicaciones → Chrome → Permisos → Micrófono → Permitir.",
+          "Vuelve a Chrome. Toca el candado a la izquierda de la dirección → Permisos → Micrófono → Permitir.",
+          "Si arriba hay un micrófono tachado, tócalo para quitar el silencio.",
+          "Recarga la página, toca Pedir permiso otra vez y después Escuchar. Cuando salga el aviso, toca Permitir.",
+          "Para la clase: menú de Chrome → Agregar a pantalla de inicio. Se abre más grande y pide el micrófono una sola vez."
+        ]
+      },
+      ipad: {
+        lead: "En el iPad usa Safari. Chrome en iPad no transcribe bien, aunque lo permitas. Si ya tocaste No permitir, hay que cambiarlo en Ajustes.",
+        steps: [
+          "Abre ApunteVivo en Safari, no en Chrome y no desde Archivos.",
+          "Ajustes → Privacidad y seguridad → Micrófono → activa Safari.",
+          "Ajustes → Privacidad y seguridad → Reconocimiento de voz → activa Safari.",
+          "Ajustes → General → Teclado → activa Dictado. Si puedes, agrega Español.",
+          "En Safari toca AA, o el icono de la izquierda de la dirección → Ajustes del sitio web → Micrófono → Permitir.",
+          "Recarga la página y toca Escuchar. Si la transcripción se corta sola, vuelve a tocar Escuchar: en iPad a veces el sistema la frena."
+        ]
+      },
+      preview: {
+        lead: "Dentro de esta conversación no se puede desbloquear. No falta un botón: el navegador prohíbe el micrófono en una ventana metida dentro de otra.",
+        steps: [
+          "Toca Abrir en el navegador, arriba, o el menú de la vista previa y elige abrir en Chrome o Safari.",
+          "En esa página suelta, toca Desbloquear micrófono y luego Permitir.",
+          "En la tablet Android abre ese enlace con Chrome. En iPad, con Safari.",
+          "No descargues el archivo y lo abras desde Archivos. Ahí el micrófono queda bloqueado para siempre.",
+          "Si la tablet ya dijo Bloquear, cambia el permiso en Ajustes y recarga. El aviso no vuelve solo."
+        ]
+      }
+    };
+    function tabletKind() {
+      const ua = navigator.userAgent || "";
+      const iPad = /iPad/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      if (iPad) return "ipad";
+      if (/Android/i.test(ua)) return "android";
+      if (inFrame()) return "preview";
+      return "android";
+    }
+    function renderMicGuide(kind) {
+      const guide = MIC_GUIDES[kind] || MIC_GUIDES.android;
+      micLead.textContent = guide.lead;
+      micSteps.replaceChildren();
+      guide.steps.forEach((text) => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        micSteps.appendChild(li);
+      });
+      document.querySelectorAll("#device-switch button").forEach((btn) => {
+        btn.classList.toggle("is-on", btn.dataset.device === kind);
+      });
+    }
+    function openMicHelp(kind) {
+      const picked = MIC_GUIDES[kind] ? kind : tabletKind();
+      renderMicGuide(inFrame() && picked !== "ipad" && picked !== "android" ? "preview" : picked);
+      if (inFrame() && (kind === "preview" || kind === "denied")) renderMicGuide("preview");
+      if (!micHelp.open) {
+        try { micHelp.showModal(); } catch (e) {}
+      }
+    }
+    async function unlockMic() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        return { ok: false, reason: "no-api" };
+      }
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      } catch (e) {
+        const name = e && e.name ? e.name : "";
+        if (name === "NotFoundError" || name === "OverconstrainedError") return { ok: false, reason: "no-device" };
+        if (name === "NotAllowedError" || name === "SecurityError" || name === "PermissionDeniedError") {
+          return { ok: false, reason: inFrame() ? "preview" : "denied" };
+        }
+        return { ok: false, reason: inFrame() ? "preview" : "denied" };
+      }
+      try { stream.getTracks().forEach((track) => track.stop()); } catch (e) {}
+      return { ok: true };
+    }
+    async function pedirPermiso() {
+      if (inFrame()) {
+        openMicHelp("preview");
+        toast("Dentro del chat no aparece el permiso. Ábrelo en Chrome o Safari.");
+        return;
+      }
+      if (location.protocol === "file:") {
+        openMicHelp(tabletKind() === "ipad" ? "ipad" : "android");
+        showBanner("file", "Abriste un archivo, no una página. En la tablet eso no se puede desbloquear. Ábrelo en Chrome o Safari.");
+        return;
+      }
+      const result = await unlockMic();
+      if (result.ok) {
+        state.micGranted = true;
+        if (micHelp.open) micHelp.close();
+        toast("Micrófono permitido. Ahora pulsa Escuchar. No se guardó audio.");
+        substatus.textContent = "Micrófono permitido. Pulsa Escuchar para transcribir. No se guarda audio.";
+        return;
+      }
+      if (result.reason === "no-device") {
+        showBanner("mic", "La tablet no encuentra un micrófono. Revisa que no esté silenciado o tapado, y que un audífono Bluetooth no lo haya tomado.");
+      }
+      openMicHelp(result.reason === "preview" ? "preview" : tabletKind());
+    }
+    function onListenClick() {
+      if (state.modalOpen) return;
+      if (state.preparing) {
+        toast("Sigue la descarga del idioma. Cuando termine, pulsa Escuchar.");
+        return;
+      }
+      if (state.shouldListen) {
+        pauseListening();
+        return;
+      }
+      if (inFrame()) {
+        framebar.hidden = false;
+        openMicHelp("preview");
+        return;
+      }
+      if (location.protocol === "file:") {
+        openMicHelp(tabletKind());
+        return;
+      }
+      if (!SR) {
+        showChoice(
+          "Hace falta Chrome o Edge",
+          "Este navegador no transcribe voz en vivo. Ábrelo en Google Chrome o Microsoft Edge, en la computadora o en un Android. Firefox y el iPhone suelen no servir para una clase continua.",
+          [{ id: "ok", label: "Entendido", primary: true, onClick: () => {} }]
+        );
+        return;
+      }
+      if (location.protocol === "file:") {
+        showChoice(
+          "Ábrelo de otra forma",
+          "Chrome bloquea el micrófono si abres el archivo directo desde la carpeta. En Windows haz doble clic en iniciar.bat. En Mac o Linux, inicia iniciar.sh. También sirve el enlace de la vista previa, en una pestaña nueva.",
+          [{ id: "ok", label: "Entendido", primary: true, onClick: () => {} }]
+        );
+        return;
+      }
+      if (state.mode === "cloud") {
+        if (state.cloudOk) startEngine("cloud", state.lang);
+        else offerCloud();
+        return;
+      }
+      if (probe.status === "pending") {
+        toast("Sigo viendo si se puede transcribir en el dispositivo. Pulsa Escuchar otra vez en un momento.");
+        return;
+      }
+      if (probe.result === "available") {
+        startEngine("local", probe.lang || state.lang);
+        if (probe.lang && probe.lang !== state.lang) {
+          toast("En el dispositivo uso " + probe.lang + ", que es el español disponible aquí.");
+        }
+        return;
+      }
+      if (probe.result === "downloadable" || probe.result === "downloading") {
+        offerDownloadOrCloud();
+        return;
+      }
+      if (state.mode === "local") {
+        showBanner("local", "Este navegador no puede transcribir solo en el dispositivo. En Ajustes puedes cambiar a por internet, o probar Chrome actualizado en la computadora.");
+        return;
+      }
+      if (state.cloudOk) startEngine("cloud", state.lang);
+      else offerCloud();
+    }
+
+    function watchdog() {
+      if (!state.shouldListen) return;
+      if (!state.listening) {
+        if (startAttempt && Date.now() - startAttempt > 8000 && startFails < 6) {
+          startAttempt = 0;
+          startFails += 1;
+          try { if (rec) rec.abort(); } catch (e) {}
+          startCycle();
+        }
+        return;
+      }
+      if (/Android/i.test(navigator.userAgent || "")) return;
+      const age = Date.now() - state.cycleStarted;
+      if ((age > 50000 && !state.interim) || age > 62000) {
+        try { if (rec) rec.stop(); } catch (e) {}
+      }
+    }
+
+    function clearNotes() {
+      showChoice(
+        "¿Empezar un apunte nuevo?",
+        state.segments.length
+          ? "Se borra el texto de esta página. Si todavía no lo descargaste, se pierde. No hay audio que borrar: nunca se guardó."
+          : "Se limpia el nombre de la clase y el tiempo.",
+        [
+          { id: "yes", label: "Borrar texto", primary: true, onClick: () => {
+            if (state.shouldListen) pauseListening();
+            state.segments = [];
+            state.elapsedMs = 0;
+            state.clockAnchor = 0;
+            state.interim = "";
+            state.forceNewPara = false;
+            state.downloaded = false;
+            state.title = "";
+            titleInput.value = "";
+            document.title = "ApunteVivo — transcripción de clase";
+            flow.innerHTML = "";
+            renderInterim();
+            updateStats();
+            save();
+          }},
+          { id: "no", label: "Cancelar", onClick: () => {} }
+        ]
+      );
+    }
+
+    function bind() {
+      listenBtn.addEventListener("click", onListenClick);
+      $("finish-btn").addEventListener("click", finishGrade);
+      $("grades-btn").addEventListener("click", () => {
+        renderArchive();
+        if (!$("archive").open) $("archive").showModal();
+      });
+      $("grado").addEventListener("change", () => {
+        state.grade = $("grado").value;
+        scheduleSave();
+      });
+      $("mic-btn").addEventListener("click", () => {
+        if (inFrame() || location.protocol === "file:") openMicHelp(inFrame() ? "preview" : tabletKind());
+        else pedirPermiso();
+      });
+      $("mic-ask").addEventListener("click", pedirPermiso);
+      $("frame-help").addEventListener("click", () => openMicHelp("preview"));
+      $("device-switch").addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn || !btn.dataset.device) return;
+        renderMicGuide(btn.dataset.device);
+      });
+      $("theme-btn").addEventListener("click", () => {
+        applyTheme(state.theme === "tinta" ? "papel" : "tinta");
+        scheduleSave();
+      });
+      $("help-btn").addEventListener("click", () => { if (!helpDialog.open) helpDialog.showModal(); });
+      $("settings-btn").addEventListener("click", () => { if (!settingsDialog.open) settingsDialog.showModal(); });
+      $("privacy-x").addEventListener("click", () => {
+        privacy.hidden = true;
+        state.privacySeen = true;
+        scheduleSave();
+      });
+      $("banner-x").addEventListener("click", () => { banner.hidden = true; });
+      titleInput.addEventListener("input", () => {
+        state.title = titleInput.value;
+        document.title = state.title.trim() ? state.title.trim() + " — ApunteVivo" : "ApunteVivo — transcripción de clase";
+        scheduleSave();
+      });
+      langSelect.addEventListener("change", () => {
+        state.lang = langSelect.value;
+        scheduleSave();
+        if (state.shouldListen && state.engineMode === "cloud") {
+          state.engineLang = state.lang;
+          try { if (rec) rec.stop(); } catch (e) {}
+        }
+        probeInBackground();
+      });
+      gapSelect.addEventListener("change", () => {
+        state.silenceGap = Number(gapSelect.value);
+        scheduleSave();
+      });
+      $("opt-times").addEventListener("change", () => {
+        state.showTimes = $("opt-times").checked;
+        refreshTimes();
+        scheduleSave();
+      });
+      $("opt-period").addEventListener("change", () => {
+        state.period = $("opt-period").checked;
+        scheduleSave();
+      });
+      $("opt-wake").addEventListener("change", () => {
+        state.keepAwake = $("opt-wake").checked;
+        if (state.shouldListen && state.keepAwake) requestWakeLock();
+        if (!state.keepAwake) releaseWakeLock();
+        scheduleSave();
+      });
+      document.querySelectorAll('input[name="mode"]').forEach((radio) => {
+        radio.addEventListener("change", () => {
+          if (radio.checked) {
+            state.mode = radio.value;
+            scheduleSave();
+            updateEnginePillIdle();
+          }
+        });
+      });
+      glossaryEl.addEventListener("input", () => {
+        syncGlossaryFromBox();
+        scheduleSave();
+      });
+      $("apply-glossary").addEventListener("click", () => {
+        syncGlossaryFromBox();
+        state.segments.forEach((seg) => {
+          if (seg.kind !== "speech") return;
+          const next = normalize(applyGlossary(seg.text));
+          if (next && next !== seg.text) {
+            seg.text = next;
+            updateSegmentDOM(seg);
+          }
+        });
+        scheduleSave();
+        toast("Apliqué las correcciones al apunte");
+      });
+      $("reprobe").addEventListener("click", () => {
+        toast("Comprobando si el dispositivo puede transcribir…");
+        probeInBackground();
+      });
+      $("font-down").addEventListener("click", () => {
+        state.fontSize = Math.max(16, state.fontSize - 2);
+        applyFont();
+        scheduleSave();
+      });
+      $("font-up").addEventListener("click", () => {
+        state.fontSize = Math.min(36, state.fontSize + 2);
+        applyFont();
+        scheduleSave();
+      });
+      noteInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const v = noteInput.value.trim();
+          if (!v) return;
+          addMark("nota", v);
+          noteInput.value = "";
+        }
+      });
+      $("tools").addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        if (btn.dataset.mark) addMark(btn.dataset.mark);
+      });
+      $("para-btn").addEventListener("click", newParagraph);
+      $("copy-btn").addEventListener("click", copyText);
+      $("download-btn").addEventListener("click", downloadText);
+      $("print-btn").addEventListener("click", printNotes);
+      $("new-btn").addEventListener("click", clearNotes);
+      jump.addEventListener("click", () => {
+        state.follow = true;
+        jump.hidden = true;
+        maybeScroll(true);
+      });
+      sheet.addEventListener("scroll", () => {
+        if (scrollingSelf) return;
+        const gap = sheet.scrollHeight - sheet.scrollTop - sheet.clientHeight;
+        state.follow = gap < 120;
+        jump.hidden = state.follow || sheet.scrollHeight <= sheet.clientHeight + 80;
+      }, { passive: true });
+      document.addEventListener("keydown", (e) => {
+        if (state.modalOpen || helpDialog.open || settingsDialog.open || micHelp.open) return;
+        const t = e.target;
+        if (t && (t.closest("input, textarea, select, [contenteditable='true']"))) return;
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        const k = e.key.toLowerCase();
+        if (k === "p") { e.preventDefault(); onListenClick(); }
+        else if (k === "n") { e.preventDefault(); newParagraph(); }
+        else if (k === "i") { e.preventDefault(); addMark("importante"); }
+        else if (k === "d") { e.preventDefault(); addMark("duda"); }
+        else if (k === "t") { e.preventDefault(); addMark("tarea"); }
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && state.shouldListen && state.keepAwake) requestWakeLock();
+        if (document.visibilityState === "hidden" && state.shouldListen && !warnedBg) {
+          warnedBg = true;
+          showBanner("bg", "Si dejas esta pestaña en segundo plano, el navegador puede cortar el micrófono. Vuelve a dejarla visible. El texto ya escrito no se pierde.");
+        }
+      });
+      window.addEventListener("beforeunload", (e) => {
+        try { save(); } catch (err) {}
+        if (state.shouldListen) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
+      window.addEventListener("pagehide", () => { try { save(); } catch (e) {} });
+      askDialog.addEventListener("cancel", (e) => {
+        e.preventDefault();
+        closeAsk();
+      });
+      window.addEventListener("beforeprint", () => {
+        $("print-title").textContent = state.title.trim() || "Apunte de clase";
+        $("print-meta").textContent = dateEl.textContent + " · " + clock(getElapsed()) + " de escucha";
+      });
+    }
+
+    function inFrame() {
+      try { return window.top !== window.self; }
+      catch (e) { return true; }
+    }
+    function setupFrame() {
+      openTab.href = location.href;
+      if (inFrame()) framebar.hidden = false;
+      if (location.protocol === "file:") {
+        showBanner("file", "Estás abriendo el archivo directo. El micrófono no va a funcionar así. Usa iniciar.bat o iniciar.sh, junto a esta carpeta.");
+      }
+    }
+
+    function init() {
+      bind();
+      const saved = loadSaved();
+      try { applySaved(saved); } catch (e) {}
+      syncControls();
+      renderDate();
+      renderAll();
+      setUiPaused();
+      setupFrame();
+      renderArchive();
+      probeInBackground();
+      setInterval(watchdog, 1000);
+      setInterval(renderDate, 60000);
+      if (saved && Array.isArray(saved.segments) && saved.segments.length) {
+        toast("Recuperé el apunte que quedó en este navegador.");
+      }
+    }
+
+    init();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a413bcd1eb611a97',t:'MTc5MDQ0MTExMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
